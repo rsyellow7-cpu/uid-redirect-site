@@ -3,12 +3,12 @@ const app = express();
 
 app.use(express.json());
 
-// Your target base URL
+// Target URL structure
 const BASE_URL = 'http://82.41.64.49:2028/free/6b88f91cd81fb7fd?uid=';
 
-// Endpoint that takes UID, calls the target URL behind the scenes, and returns the result
-app.get('/process-uid/:uid', async (req, res) => {
-  const uid = req.params.uid;
+// API route to attach UID and fetch result behind the scenes
+app.get('/api/get-data/:uid', async (req, res) => {
+  const { uid } = req.params;
 
   if (!uid) {
     return res.status(400).json({ error: 'UID is required' });
@@ -17,28 +17,20 @@ app.get('/process-uid/:uid', async (req, res) => {
   const targetUrl = `${BASE_URL}${uid}`;
 
   try {
-    // Make the request behind the scenes from your server
+    // Fetch data from the target server directly on your backend
     const response = await fetch(targetUrl);
-    const data = await response.text(); // or response.json() if the target returns JSON
+    const data = await response.text();
 
-    // Return the response back to your website's user without leaving your page
-    res.json({
-      success: true,
-      uid: uid,
-      targetUrl: targetUrl,
-      result: data
-    });
+    // Send the target's response back to your website
+    res.send(data);
   } catch (error) {
-    console.error('Error fetching target URL:', error);
-    res.status(500).json({
-      error: 'Failed to connect to the target server',
-      details: error.message
-    });
+    console.error('Fetch error:', error);
+    res.status(500).json({ error: 'Failed to fetch data from target URL' });
   }
 });
 
-// START SERVER (Configured for Render with process.env.PORT)
+// ALWAYS KEEP THIS AT THE BOTTOM FOR RENDER
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
