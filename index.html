@@ -1,148 +1,31 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YS X CHEATS - UID Portal</title>
-    <style>
-        :root {
-            --primary-pink: #ff2a85;
-            --primary-purple: #8a2be2;
-            --gradient: linear-gradient(135deg, #ff2a85 0%, #8a2be2 100%);
-            --dark-bg: #0f0c1b;
-            --card-bg: rgba(23, 18, 38, 0.85);
-        }
+<!-- Input form on your website -->
+<input type="text" id="uidInput" placeholder="Enter your UID" />
+<button onclick="submitUid()">Submit</button>
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--dark-bg);
-            background-image: radial-gradient(circle at 50% -20%, #4a154b, transparent 60%);
-            color: #ffffff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-        }
+<!-- Container to show result on your page -->
+<div id="resultContainer"></div>
 
-        .card {
-            background: var(--card-bg);
-            padding: 40px 30px;
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5),
-                        0 0 20px rgba(255, 42, 133, 0.2);
-            border: 1px solid rgba(255, 42, 133, 0.2);
-            backdrop-filter: blur(10px);
-            width: 100%;
-            max-width: 380px;
-            text-align: center;
-            box-sizing: border-box;
-        }
+<script>
+async function submitUid() {
+  const uid = document.getElementById('uidInput').value;
+  const resultContainer = document.getElementById('resultContainer');
 
-        .brand-title {
-            font-size: 28px;
-            font-weight: 800;
-            letter-spacing: 2px;
-            background: var(--gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin: 0 0 8px 0;
-            text-transform: uppercase;
-        }
+  if (!uid) {
+    alert('Please enter a UID');
+    return;
+  }
 
-        .subtitle {
-            font-size: 14px;
-            color: #b3a6d3;
-            margin-bottom: 28px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
+  resultContainer.innerText = 'Loading...';
 
-        .input-group {
-            text-align: left;
-            margin-bottom: 24px;
-        }
+  try {
+    // Call your own Render backend API endpoint
+    const response = await fetch(`/api/get-data/${uid}`);
+    const data = await response.text();
 
-        label {
-            font-size: 12px;
-            font-weight: 600;
-            color: #e0d5f5;
-            display: block;
-            margin-bottom: 8px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        input[type="text"] {
-            width: 100%;
-            padding: 14px 16px;
-            background: rgba(10, 7, 18, 0.6);
-            border: 1px solid rgba(138, 43, 226, 0.4);
-            border-radius: 8px;
-            color: #ffffff;
-            font-size: 15px;
-            box-sizing: border-box;
-            outline: none;
-            transition: all 0.3s ease;
-        }
-
-        input[type="text"]:focus {
-            border-color: var(--primary-pink);
-            box-shadow: 0 0 12px rgba(255, 42, 133, 0.4);
-        }
-
-        input[type="text"]::placeholder {
-            color: #6b5c8d;
-        }
-
-        button {
-            width: 100%;
-            background: var(--gradient);
-            color: #ffffff;
-            border: none;
-            padding: 14px;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 700;
-            letter-spacing: 1px;
-            cursor: pointer;
-            text-transform: uppercase;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-            box-shadow: 0 4px 15px rgba(255, 42, 133, 0.3);
-        }
-
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(255, 42, 133, 0.5);
-        }
-
-        button:active {
-            transform: translateY(0);
-        }
-    </style>
-</head>
-<body>
-
-    <div class="card">
-        <h1 class="brand-title">YS X CHEATS</h1>
-        <div class="subtitle">ADD YOUR UID</div>
-        
-        <form id="uidForm">
-            <div class="input-group">
-                <label for="uidInput">User ID</label>
-                <input 
-                    type="text" 
-                    id="uidInput" 
-                    placeholder="Enter your UID..." 
-                    required 
-                    autocomplete="off"
-                >
-            </div>
-            <button type="submit">Submit UID</button>
-        </form>
-    </div>
-
-    <!-- JavaScript Link -->
-    <script src="script.js"></script>
-</body>
-</html>
+    // Display the result on your website
+    resultContainer.innerText = data;
+  } catch (err) {
+    resultContainer.innerText = 'Error loading data.';
+  }
+}
+</script>
