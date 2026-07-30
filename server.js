@@ -3,11 +3,11 @@ const path = require('path');
 const app = express();
 
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public'))); // Serves static HTML files
+app.use(express.static(path.join(__dirname, 'public')));
 
 const TARGET_BASE_URL = 'http://82.41.64.49:2028/free/6b88f91cd81fb7fd?uid=';
 
-// API Endpoint to submit UID
+// Endpoint to process full UIDs (e.g., 123456789010)
 app.get('/api/add-uid/:uid', async (req, res) => {
   const { uid } = req.params;
 
@@ -15,31 +15,31 @@ app.get('/api/add-uid/:uid', async (req, res) => {
     return res.status(400).json({ success: false, message: 'Invalid UID provided.' });
   }
 
+  const targetUrl = `${TARGET_BASE_URL}${uid}`;
+
   try {
-    const targetUrl = `${TARGET_BASE_URL}${uid}`;
     const response = await fetch(targetUrl);
 
     if (response.ok) {
       res.json({
         success: true,
-        message: `UID ${uid} has been successfully added!`,
+        message: `UID ${uid} added successfully!`,
         uid: uid
       });
     } else {
-      // Handles 404s or non-200 responses from the external server
       res.json({
         success: false,
-        message: `Failed to register UID (Server returned status ${response.status}).`
+        message: `Server returned error status (${response.status}) for UID ${uid}.`
       });
     }
   } catch (error) {
     console.error('Fetch Error:', error);
     res.status(500).json({
       success: false,
-      message: 'Could not connect to activation server.'
+      message: 'Failed to reach activation server.'
     });
   }
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server listening on port ${PORT}`));
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
